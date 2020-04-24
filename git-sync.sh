@@ -6,6 +6,7 @@ SOURCE_REPO=$1
 SOURCE_BRANCH=$2
 DESTINATION_REPO=$3
 DESTINATION_BRANCH=$4
+MERGE=$5
 
 if ! echo $SOURCE_REPO | grep '.git'
 then
@@ -31,9 +32,10 @@ fi
 echo "SOURCE=$SOURCE_REPO:$SOURCE_BRANCH"
 echo "DESTINATION=$DESTINATION_REPO:$DESTINATION_BRANCH"
 
-git clone "$SOURCE_REPO" source --origin source --branch ${SOURCE_BRANCH} && cd source
+git clone "$SOURCE_REPO" --origin source --branch ${SOURCE_BRANCH} && cd `basename "$SOURCE_REPO" .git`
 git remote add destination "$DESTINATION_REPO"
 if [[ -n "$MERGE" ]]
-  then
-    git pull destination --commit ${DESTINATION_BRANCH}
+then
+  git pull destination --no-edit --commit ${DESTINATION_BRANCH}
+fi
 git push destination "${SOURCE_BRANCH}:${DESTINATION_BRANCH}" -f
